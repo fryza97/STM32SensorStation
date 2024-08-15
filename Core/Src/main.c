@@ -100,7 +100,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf("Fast test of USART\r\n");
 
   while (1)
   {

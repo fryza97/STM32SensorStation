@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
@@ -26,6 +27,9 @@
 /* USER CODE BEGIN Includes */
 #include "../MyLibraries/USART.h"
 #include "../MyLibraries/GPIO.h"
+#include "../MyLibraries/I2C.h"
+#include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +39,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,9 +47,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,6 +80,19 @@ int main(void)
   /* System interrupt init*/
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
+  /* MemoryManagement_IRQn interrupt configuration */
+  NVIC_SetPriority(MemoryManagement_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  /* BusFault_IRQn interrupt configuration */
+  NVIC_SetPriority(BusFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  /* UsageFault_IRQn interrupt configuration */
+  NVIC_SetPriority(UsageFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  /* SVCall_IRQn interrupt configuration */
+  NVIC_SetPriority(SVCall_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  /* DebugMonitor_IRQn interrupt configuration */
+  NVIC_SetPriority(DebugMonitor_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  /* PendSV_IRQn interrupt configuration */
+  NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -92,6 +106,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
@@ -100,11 +115,36 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  I2CInit();
+
+  //I2C dma test
+  uint8_t test1 = 0x15;
+  uint8_t test2 = 0x20;
+  uint8_t test3 = 0x25;
+
+  uint8_t result1 = 0x00;
+  uint8_t result2 = 0x00;
+  uint8_t result3 = 0x00;
+
+
+  I2CSendDMA(0xA0, 0x11, &test1, 1);
+  LL_mDelay(5);
+  I2CSendDMA(0xA0, 0x12, &test2, 1);
+  LL_mDelay(5);
+  I2CSendDMA(0xA0, 0x13, &test3, 1);
+  LL_mDelay(5);
+
+  I2CReadDMA(0xA0, 0x13, &result1, 1);
+  LL_mDelay(5);
+  I2CReadDMA(0xA0, 0x12, &result3, 1);
+  LL_mDelay(5);
+  I2CReadDMA(0xA0, 0x11, &result2, 1);
+  LL_mDelay(5);
 
   while (1)
   {
-    /* USER CODE END WHILE */
 
+    /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -149,7 +189,7 @@ void SystemClock_Config(void)
 
   }
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
   LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
   LL_Init1msTick(80000000);

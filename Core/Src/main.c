@@ -28,6 +28,7 @@
 #include "../MyLibraries/USART.h"
 #include "../MyLibraries/GPIO.h"
 #include "../MyLibraries/I2C.h"
+#include "../MyLibraries/BME680.h"
 #include <stdio.h>
 #include <string.h>
 /* USER CODE END Includes */
@@ -43,10 +44,10 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 
@@ -115,36 +116,20 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   I2CInit();
+  BME680init();
 
-  //I2C dma test
-  uint8_t test1 = 0x15;
-  uint8_t test2 = 0x20;
-  uint8_t test3 = 0x25;
-
-  uint8_t result1 = 0x00;
-  uint8_t result2 = 0x00;
-  uint8_t result3 = 0x00;
-
-
-  I2CSendDMA(0xA0, 0x11, &test1, 1);
-  LL_mDelay(5);
-  I2CSendDMA(0xA0, 0x12, &test2, 1);
-  LL_mDelay(5);
-  I2CSendDMA(0xA0, 0x13, &test3, 1);
-  LL_mDelay(5);
-
-  I2CReadDMA(0xA0, 0x13, &result1, 1);
-  LL_mDelay(5);
-  I2CReadDMA(0xA0, 0x12, &result3, 1);
-  LL_mDelay(5);
-  I2CReadDMA(0xA0, 0x11, &result2, 1);
-  LL_mDelay(5);
 
   while (1)
   {
+	  BME680measurment();
+	  BME680show();
+
+	  LL_mDelay(2000);
 
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

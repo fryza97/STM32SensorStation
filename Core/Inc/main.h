@@ -38,6 +38,7 @@ extern "C" {
 #include "stm32l4xx_ll_cortex.h"
 #include "stm32l4xx_ll_utils.h"
 #include "stm32l4xx_ll_pwr.h"
+#include "stm32l4xx_ll_spi.h"
 #include "stm32l4xx_ll_usart.h"
 #include "stm32l4xx_ll_gpio.h"
 
@@ -81,6 +82,12 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin LL_GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define RST_Pin LL_GPIO_PIN_2
+#define RST_GPIO_Port GPIOB
+#define DC_Pin LL_GPIO_PIN_11
+#define DC_GPIO_Port GPIOB
+#define CS_Pin LL_GPIO_PIN_12
+#define CS_GPIO_Port GPIOB
 #define TMS_Pin LL_GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin LL_GPIO_PIN_14

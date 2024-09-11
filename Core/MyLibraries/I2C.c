@@ -86,7 +86,6 @@ void I2CSendDMA(uint16_t slave_addr, uint16_t reg_addr, uint8_t* data_ptr, uint1
 	LL_mDelay(MEM_BUSY);
 }
 
-
 void I2CReadDMA(uint16_t slave_addr, uint16_t reg_addr, uint8_t* data_ptr, uint16_t size){
 	LL_I2C_HandleTransfer(i2c, slave_addr, LL_I2C_ADDRSLAVE_7BIT, 1, LL_I2C_MODE_SOFTEND, LL_I2C_GENERATE_START_WRITE);
 

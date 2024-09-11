@@ -10,6 +10,7 @@
 
 void BME680init();
 void BME680measurment();
+void BME680start();
 void BME680show();
 
 #endif /* MYLIBRARIES_BME680_H_ */

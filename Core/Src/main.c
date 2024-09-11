@@ -20,6 +20,7 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -29,8 +30,8 @@
 #include "../MyLibraries/GPIO.h"
 #include "../MyLibraries/I2C.h"
 #include "../MyLibraries/BME680.h"
-#include <stdio.h>
-#include <string.h>
+#include "../MyLibraries/LCD.h"
+#include "../MyLibraries/SPI.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,23 +111,27 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  SPIInit();
+  LCDInit();
+
+  BME680start();
 
   I2CInit();
   BME680init();
-
 
   while (1)
   {
 	  BME680measurment();
 	  BME680show();
 
-	  LL_mDelay(2000);
+	  //LL_mDelay(4000);
 
     /* USER CODE END WHILE */
 

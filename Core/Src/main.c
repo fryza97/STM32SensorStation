@@ -26,12 +26,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <bme680/bme68x_necessary_functions.h>
 #include "../MyLibraries/USART.h"
 #include "../MyLibraries/GPIO.h"
 #include "../MyLibraries/I2C.h"
 #include "../MyLibraries/BME680.h"
 #include "../MyLibraries/LCD.h"
 #include "../MyLibraries/SPI.h"
+#include "../MyLibraries/WS.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,18 +120,26 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  struct bme68x_data data;
+
   SPIInit();
   LCDInit();
 
-  BME680start();
+  WSStartScreen();
 
   I2CInit();
-  BME680init();
+  BME680init(&data);
 
   while (1)
   {
-	  BME680measurment();
-	  BME680show();
+	  BME680measurment(&data);
+	  WSShowAll(&data);
+	  /*WSShowTitle();
+	  WSShowTemp(data.temperature);
+	  WSShowPress(data.pressure);
+	  WSShowHum(data.humidity);
+	  WSShowQual(data.iaq_score);
+	  LCDCopy();*/
 
 	  //LL_mDelay(4000);
 

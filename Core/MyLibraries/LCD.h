@@ -24,7 +24,7 @@
 #define MAGENTA		0x1ff8
 #define CYAN		0xff07
 #define WHITE		0xffff
-#define ORANGE 		0xfbe0
+#define ORANGE 		0xe0fb
 #define GRAY 		0x7bfe
 
 void LCDInit(void);

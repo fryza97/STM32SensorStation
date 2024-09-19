@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "../MyLibraries/I2C.h"
 #include "../MyLibraries/LCD.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,7 +60,8 @@
 /* External variables --------------------------------------------------------*/
 
 /* USER CODE BEGIN EV */
-
+bool state = true;
+extern uint8_t interrupt0, interrupt1, interrupt2;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -249,6 +251,66 @@ void DMA1_Channel7_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
 
   /* USER CODE END DMA1_Channel7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
+    /* USER CODE BEGIN LL_EXTI_LINE_10 */
+    if(state)
+    	interrupt2 = 1;
+    /* USER CODE END LL_EXTI_LINE_10 */
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
+    /* USER CODE BEGIN LL_EXTI_LINE_11 */
+    if(state)
+    	interrupt1 = 1;
+    /* USER CODE END LL_EXTI_LINE_11 */
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
+    /* USER CODE BEGIN LL_EXTI_LINE_12 */
+    if(state)
+        interrupt0 = 1;
+    /* USER CODE END LL_EXTI_LINE_12 */
+  }
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+  if(state){
+     state = false;
+  	 LL_TIM_EnableCounter(TIM6);
+   }
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM6 global interrupt, DAC channel1 and channel2 underrun error interrupts.
+  */
+void TIM6_DAC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+	if(LL_TIM_IsActiveFlag_UPDATE(TIM6) == 1){
+		LL_TIM_ClearFlag_UPDATE(TIM6);
+		LL_TIM_DisableCounter(TIM6);
+	}
+
+	state = true;
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+
+  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

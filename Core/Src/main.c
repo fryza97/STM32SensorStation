@@ -20,7 +20,9 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "rtc.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -34,6 +36,7 @@
 #include "../MyLibraries/LCD.h"
 #include "../MyLibraries/SPI.h"
 #include "../MyLibraries/WS.h"
+#include "../MyLibraries/RTC.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,6 +55,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+volatile uint8_t interrupt0, interrupt1, interrupt2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,17 +89,17 @@ int main(void)
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* MemoryManagement_IRQn interrupt configuration */
-  NVIC_SetPriority(MemoryManagement_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(MemoryManagement_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   /* BusFault_IRQn interrupt configuration */
-  NVIC_SetPriority(BusFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(BusFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   /* UsageFault_IRQn interrupt configuration */
-  NVIC_SetPriority(UsageFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(UsageFault_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   /* SVCall_IRQn interrupt configuration */
-  NVIC_SetPriority(SVCall_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(SVCall_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   /* DebugMonitor_IRQn interrupt configuration */
-  NVIC_SetPriority(DebugMonitor_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(DebugMonitor_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   /* PendSV_IRQn interrupt configuration */
-  NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),2, 0));
+  NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
 
   /* USER CODE BEGIN Init */
 
@@ -114,6 +118,8 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
+  MX_RTC_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -121,7 +127,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   struct bme68x_data data;
+  struct RTC_values now = { 24, 5, 9, 14, 15, 57, 0};
+  uint8_t before_hour = now.hour-1;
+  uint8_t before_minutes = now.minutes-1;
+  uint8_t menu_state = 0;
 
+  RTCSet(&now);
   SPIInit();
   LCDInit();
 
@@ -132,17 +143,12 @@ int main(void)
 
   while (1)
   {
-	  BME680measurment(&data);
-	  WSShowAll(&data);
-	  /*WSShowTitle();
-	  WSShowTemp(data.temperature);
-	  WSShowPress(data.pressure);
-	  WSShowHum(data.humidity);
-	  WSShowQual(data.iaq_score);
-	  LCDCopy();*/
+	 WSMain(&menu_state, &before_hour, &before_minutes, &now, &data);
 
-	  //LL_mDelay(4000);
-
+	 if(menu_state == 0 && interrupt1 == 1){
+		 menu_state = 1;
+	 	 interrupt1 = 0;
+	 }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -172,6 +178,15 @@ void SystemClock_Config(void)
 
   }
   LL_RCC_HSI_SetCalibTrimming(16);
+  LL_PWR_EnableBkUpAccess();
+  LL_RCC_LSE_SetDriveCapability(LL_RCC_LSEDRIVE_LOW);
+  LL_RCC_LSE_Enable();
+
+   /* Wait till LSE is ready */
+  while(LL_RCC_LSE_IsReady() != 1)
+  {
+
+  }
   LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_1, 10, LL_RCC_PLLR_DIV_2);
   LL_RCC_PLL_EnableDomain_SYS();
   LL_RCC_PLL_Enable();

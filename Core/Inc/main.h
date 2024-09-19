@@ -38,7 +38,9 @@ extern "C" {
 #include "stm32l4xx_ll_cortex.h"
 #include "stm32l4xx_ll_utils.h"
 #include "stm32l4xx_ll_pwr.h"
+#include "stm32l4xx_ll_rtc.h"
 #include "stm32l4xx_ll_spi.h"
+#include "stm32l4xx_ll_tim.h"
 #include "stm32l4xx_ll_usart.h"
 #include "stm32l4xx_ll_gpio.h"
 
@@ -74,8 +76,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define B1_Pin LL_GPIO_PIN_13
-#define B1_GPIO_Port GPIOC
 #define USART_TX_Pin LL_GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin LL_GPIO_PIN_3
@@ -88,10 +88,19 @@ void Error_Handler(void);
 #define DC_GPIO_Port GPIOB
 #define CS_Pin LL_GPIO_PIN_12
 #define CS_GPIO_Port GPIOB
+#define BUTTON1_Pin LL_GPIO_PIN_11
+#define BUTTON1_GPIO_Port GPIOA
+#define BUTTON1_EXTI_IRQn EXTI15_10_IRQn
 #define TMS_Pin LL_GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin LL_GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define BUTTON2_Pin LL_GPIO_PIN_10
+#define BUTTON2_GPIO_Port GPIOC
+#define BUTTON2_EXTI_IRQn EXTI15_10_IRQn
+#define BUTTON0_Pin LL_GPIO_PIN_12
+#define BUTTON0_GPIO_Port GPIOC
+#define BUTTON0_EXTI_IRQn EXTI15_10_IRQn
 #define SWO_Pin LL_GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #ifndef NVIC_PRIORITYGROUP_0

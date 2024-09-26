@@ -24,7 +24,7 @@ Image 1: Weather station display
 
 Device setup:<br />
 --------------------
-![image](https://github.com/user-attachments/assets/9b1bb887-513c-45af-92b6-71aea92cd46d)<br />
+![image](https://github.com/user-attachments/assets/5e449aee-dd01-4173-922c-8ca355a4857f)<br />
 Image 2: Weather station during setup
 
 After clicking the middle switch, the currently changed value is displayed in yellow. The left button decreases the value and the right button increases it. The middle switch moves to the next value.

@@ -32,3 +32,9 @@ After clicking the middle switch, the currently changed value is displayed in ye
 Debouncing procedure:<br />
 ---------------------------
 After a switch click, the MCU enters an interrupt handler (all three switches use EXTI9-15). In if statements, the program checks which button was clicked and sets the flag interrupt1, interrupt2, or interrupt3. It also sets the debouncer flag, which prevents the detection of another press, and starts timer 6. After 50 ms, in the interrupt from the timer, the debouncer flag is cleared, and the MCU can handle the next button press.
+
+PCB:<br />
+---------------------
+
+This version of the software is written for the STM32L476RG on a Nucleo board, but here is a PCB project with the STM32L0 MCU: https://github.com/fryza97/STM32SensorStation-PCB
+
